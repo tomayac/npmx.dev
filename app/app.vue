@@ -160,6 +160,8 @@ if (!isBlogPostRoute.value) {
 
     <CommandPalette />
 
+    <PwaPrompt />
+
     <AppFooter />
 
     <ScrollToTop />

@@ -342,11 +342,16 @@ export default defineNuxtConfig({
   },
 
   pwa: {
-    // Disable service worker
-    disable: true,
     pwaAssets: {
       disabled: isStorybook,
       config: false,
+    },
+    strategies: 'generateSW',
+    registerType: 'prompt',
+    workbox: {
+      navigateFallback: null,
+      cleanupOutdatedCaches: true,
+      globPatterns: ['**/*.{js,css,ico,png,svg,webp,woff,woff2}'],
     },
     manifest: {
       name: 'npmx',
@@ -354,6 +359,9 @@ export default defineNuxtConfig({
       description: 'A fast, modern browser for the npm registry',
       theme_color: '#0a0a0a',
       background_color: '#0a0a0a',
+      display: 'standalone',
+      start_url: '/',
+      scope: '/',
       icons: [
         {
           src: 'pwa-64x64.png',

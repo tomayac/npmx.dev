@@ -256,6 +256,13 @@
       "body": "We don't have a “{slug}” noodle on the menu. Either it's still being plated, or it was never written. Either way — back to the archive."
     }
   },
+  "pwa": {
+    "update_available": "A new version is available.",
+    "refresh": "Refresh",
+    "install": "Install",
+    "install_app": "Install app",
+    "install_app_description": "Add npmx to your home screen for a faster, app-like experience."
+  },
   "settings": {
     "title": "settings",
     "tagline": "customize your npmx experience",
@@ -265,7 +272,8 @@
       "display": "Display",
       "search": "Search features",
       "language": "Language",
-      "keyboard_shortcuts": "Keyboard shortcuts"
+      "keyboard_shortcuts": "Keyboard shortcuts",
+      "app": "App"
     },
     "data_source": {
       "label": "Data source",
