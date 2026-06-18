@@ -89,6 +89,7 @@
     "focus-trap": "^8.0.0",
     "gray-matter": "4.0.3",
     "hls.js": "1.6.16",
+    "input-switch-polyfill": "1.11.0",
     "ipaddr.js": "2.3.0",
     "marked": "18.0.0",
     "module-replacements": "3.0.0-beta.8",
