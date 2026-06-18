@@ -76,6 +76,16 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
   copiedDuring: 2000,
 })
 
+const canShare = import.meta.client && 'share' in navigator
+
+function sharePackage() {
+  navigator.share({
+    title: packageName.value,
+    text: props.displayVersion?.description ?? packageName.value,
+    url: window.location.href,
+  }).catch(() => {})
+}
+
 function hasProvenance(version: PackumentVersion | null): boolean {
   if (!version?.dist) return false
   return !!(version.dist as { attestations?: unknown }).attestations
@@ -100,6 +110,17 @@ useCommandPaletteContextCommands(
         },
       },
     ]
+
+    if (canShare) {
+      commands.push({
+        id: 'package-share',
+        group: 'package',
+        label: $t('package.links.share'),
+        keywords: [packageName.value, 'share'],
+        iconClass: 'i-lucide:share-2',
+        action: sharePackage,
+      })
+    }
 
     if (fundingUrl.value) {
       commands.push({
@@ -235,6 +256,11 @@ useShortcuts({
           <span class="max-sm:sr-only">{{ $t('package.links.compare_this_package') }}</span>
         </LinkBase>
         <PackageLikes :packageName />
+
+        <PackageShareButton
+          :package-name="packageName"
+          :description="displayVersion?.description"
+        />
 
         <LinkBase
           variant="button-secondary"
