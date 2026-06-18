@@ -214,6 +214,33 @@ useShortcuts({
 })
 </script>
 
+<style scoped>
+/*
+ * Window Controls Overlay — moves the app header into the installed PWA title
+ * bar, making the chrome controls (close/min/max) sit flush with the header.
+ *
+ * env(titlebar-area-y)  — vertical offset from viewport top (usually 0)
+ * env(titlebar-area-x)  — horizontal offset after macOS traffic lights (0 on Windows)
+ *
+ * The background <div> inherits `drag` from the header, so the frosted-glass
+ * strip between interactive elements acts as the window drag handle.
+ * Every descendant of <nav> inherits `no-drag` from the nav itself.
+ */
+@media (display-mode: window-controls-overlay) {
+  header {
+    padding-top: env(titlebar-area-y, 0px);
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+
+  nav {
+    padding-inline-start: env(titlebar-area-x, 0px);
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+}
+</style>
+
 <template>
   <header class="sticky top-0 z-50 border-b border-border">
     <div class="absolute inset-0 bg-bg/80 backdrop-blur-md" />

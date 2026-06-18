@@ -360,8 +360,32 @@ export default defineNuxtConfig({
       theme_color: '#0a0a0a',
       background_color: '#0a0a0a',
       display: 'standalone',
+      display_override: ['window-controls-overlay', 'standalone'],
       start_url: '/',
       scope: '/',
+      shortcuts: [
+        {
+          name: 'Search packages',
+          short_name: 'Search',
+          description: 'Search the npm registry',
+          url: '/search',
+          icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
+          name: 'Compare packages',
+          short_name: 'Compare',
+          description: 'Compare npm packages side by side',
+          url: '/compare',
+          icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
+          name: 'Settings',
+          short_name: 'Settings',
+          description: 'Customize your npmx experience',
+          url: '/settings',
+          icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+        },
+      ],
       icons: [
         {
           src: 'pwa-64x64.png',
