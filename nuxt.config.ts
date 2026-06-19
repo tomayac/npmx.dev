@@ -361,6 +361,7 @@ export default defineNuxtConfig({
       background_color: '#0a0a0a',
       display: 'standalone',
       display_override: ['window-controls-overlay', 'standalone'],
+      id: '/',
       start_url: '/',
       scope: '/',
       shortcuts: [
