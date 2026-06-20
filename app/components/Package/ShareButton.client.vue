@@ -5,22 +5,60 @@ const props = defineProps<{
 }>()
 
 const canShare = 'share' in navigator
+const buttonRef = useTemplateRef<{ click: () => void }>('buttonRef')
+
+if (canShare) {
+  onKeyStroke(
+    e => isKeyWithoutModifiers(e, 'v') && !isEditableElement(e.target),
+    e => {
+      e.preventDefault()
+      // Click the button element so the browser anchors the share sheet at
+      // the button's position rather than the current mouse cursor position.
+      buttonRef.value?.click()
+    },
+  )
+}
+
+async function getOgImageFile(): Promise<File | null> {
+  // Files sharing is not universally supported; bail out early if not available.
+  if (!navigator.canShare?.({ files: [new File([], 'x.png', { type: 'image/png' })] })) {
+    return null
+  }
+  try {
+    const ogMeta = document.querySelector<HTMLMetaElement>('meta[property="og:image"]')
+    if (!ogMeta?.content) return null
+    const blob = await fetch(ogMeta.content).then(r => r.blob())
+    if (!blob.type.startsWith('image/')) return null
+    return new File([blob], `${props.packageName}.png`, { type: blob.type })
+  } catch {
+    return null
+  }
+}
 
 async function share() {
-  await navigator.share({
+  const shareData: ShareData = {
     title: props.packageName,
     text: props.description ?? props.packageName,
     url: window.location.href,
-  }).catch(() => {})
+  }
+
+  const imageFile = await getOgImageFile()
+  if (imageFile) {
+    shareData.files = [imageFile]
+  }
+
+  await navigator.share(shareData).catch(() => {})
 }
 </script>
 
 <template>
   <ButtonBase
     v-if="canShare"
+    ref="buttonRef"
     variant="secondary"
     classicon="i-lucide:share-2"
     :aria-label="$t('package.share_aria_label', { package: packageName })"
+    :ariaKeyshortcuts="'v'"
     @click="share"
   >
     <span class="max-sm:sr-only">{{ $t('package.links.share') }}</span>
