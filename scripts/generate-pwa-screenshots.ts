@@ -58,13 +58,33 @@ const SHOTS: readonly Shot[] = [
   // Desktop (wide) — Chrome shows these in the install dialog on desktop
   { name: 'desktop-dark-home', path: '/', mode: 'dark', viewport: { width: 1280, height: 800 } },
   { name: 'desktop-light-home', path: '/', mode: 'light', viewport: { width: 1280, height: 800 } },
-  { name: 'desktop-dark-package', path: `/package/${FIXTURE_PACKAGE}`, mode: 'dark', viewport: { width: 1280, height: 800 } },
-  { name: 'desktop-light-package', path: `/package/${FIXTURE_PACKAGE}`, mode: 'light', viewport: { width: 1280, height: 800 } },
+  {
+    name: 'desktop-dark-package',
+    path: `/package/${FIXTURE_PACKAGE}`,
+    mode: 'dark',
+    viewport: { width: 1280, height: 800 },
+  },
+  {
+    name: 'desktop-light-package',
+    path: `/package/${FIXTURE_PACKAGE}`,
+    mode: 'light',
+    viewport: { width: 1280, height: 800 },
+  },
   // Mobile (narrow) — Chrome shows these on Android
   { name: 'mobile-dark-home', path: '/', mode: 'dark', viewport: { width: 390, height: 844 } },
   { name: 'mobile-light-home', path: '/', mode: 'light', viewport: { width: 390, height: 844 } },
-  { name: 'mobile-dark-package', path: `/package/${FIXTURE_PACKAGE}`, mode: 'dark', viewport: { width: 390, height: 844 } },
-  { name: 'mobile-light-package', path: `/package/${FIXTURE_PACKAGE}`, mode: 'light', viewport: { width: 390, height: 844 } },
+  {
+    name: 'mobile-dark-package',
+    path: `/package/${FIXTURE_PACKAGE}`,
+    mode: 'dark',
+    viewport: { width: 390, height: 844 },
+  },
+  {
+    name: 'mobile-light-package',
+    path: `/package/${FIXTURE_PACKAGE}`,
+    mode: 'light',
+    viewport: { width: 390, height: 844 },
+  },
 ]
 
 async function waitForServer(url: string, timeoutMs = 30_000): Promise<void> {
@@ -74,8 +94,9 @@ async function waitForServer(url: string, timeoutMs = 30_000): Promise<void> {
       const res = await fetch(url, { signal: AbortSignal.timeout(3000) })
       // Any response (even 404) means the HTTP server is up
       if (res.status < 500) return
+    } catch {
+      /* server not ready yet — keep polling */
     }
-    catch { /* server not ready yet — keep polling */ }
     await new Promise(resolve => setTimeout(resolve, 500))
   }
   throw new Error(`Server at ${url} did not become ready within ${timeoutMs / 1000}s`)
@@ -85,8 +106,8 @@ async function startPreviewServer(): Promise<{ process: ChildProcess; url: strin
   const outputDir = join(rootDir, '.output')
   if (!existsSync(outputDir)) {
     throw new Error(
-      'Build output not found. Run `pnpm build` before generating screenshots,\n'
-      + 'or pass --url to connect to an already-running server.',
+      'Build output not found. Run `pnpm build` before generating screenshots,\n' +
+        'or pass --url to connect to an already-running server.',
     )
   }
 
@@ -102,7 +123,9 @@ async function startPreviewServer(): Promise<{ process: ChildProcess; url: strin
   })
 
   server.stderr?.on('data', (chunk: Buffer) => process.stderr.write(chunk))
-  server.on('error', (err) => { throw err })
+  server.on('error', err => {
+    throw err
+  })
 
   await waitForServer(url)
   console.log('Preview server ready.\n')
@@ -118,8 +141,7 @@ async function main(): Promise<void> {
   if (explicitUrl) {
     baseUrl = explicitUrl.replace(/\/$/, '')
     console.log(`Connecting to ${baseUrl}\n`)
-  }
-  else {
+  } else {
     const started = await startPreviewServer()
     server = started.process
     baseUrl = started.url
@@ -152,8 +174,7 @@ async function main(): Promise<void> {
 
       await context.close()
     }
-  }
-  finally {
+  } finally {
     await browser.close()
     if (server) {
       server.kill('SIGTERM')
@@ -165,7 +186,7 @@ async function main(): Promise<void> {
   console.log('or use `--url https://npmx.dev` in CI to skip the local server.')
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(err instanceof Error ? err.message : err)
   process.exit(1)
 })
