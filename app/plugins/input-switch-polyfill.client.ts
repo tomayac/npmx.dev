@@ -7,9 +7,10 @@ export default defineNuxtPlugin(async () => {
     // Re-sync whenever the accent or color-mode changes so switches react live.
     const syncSwitchAccent = () => {
       const switches = document.querySelectorAll<HTMLInputElement>('input.switch')
-      if (!switches.length) return
+      const [first] = switches
+      if (!first) return
       // All switches share the same cascade; read from the first one.
-      const color = getComputedStyle(switches[0]).getPropertyValue('accent-color').trim()
+      const color = getComputedStyle(first).getPropertyValue('accent-color').trim()
       if (!color || color === 'auto') return
       for (const el of switches) {
         el.style.setProperty('--switch-accent', color)
