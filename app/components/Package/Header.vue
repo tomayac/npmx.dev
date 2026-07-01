@@ -2,7 +2,6 @@
 import type { RouteLocationRaw } from 'vue-router'
 import type { CommandPaletteContextCommandInput } from '~/types/command-palette'
 import { SCROLL_TO_TOP_THRESHOLD } from '~/composables/useScrollToTop'
-import { usePackageChangelog } from '~/composables/usePackageChangelog'
 
 const props = defineProps<{
   pkg?: Pick<SlimPackument, 'name' | 'versions' | 'dist-tags'> | null
@@ -79,11 +78,13 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
 const canShare = import.meta.client && 'share' in navigator
 
 function sharePackage() {
-  navigator.share({
-    title: packageName.value,
-    text: props.displayVersion?.description ?? packageName.value,
-    url: window.location.href,
-  }).catch(() => {})
+  navigator
+    .share({
+      title: packageName.value,
+      text: props.displayVersion?.description ?? packageName.value,
+      url: window.location.href,
+    })
+    .catch(() => {})
 }
 
 function hasProvenance(version: PackumentVersion | null): boolean {
@@ -184,12 +185,15 @@ const diffLink = computed((): RouteLocationRaw | null => {
   return diffRoute(props.pkg.name, props.resolvedVersion, props.latestVersion.version)
 })
 
-const { data: changelog } = usePackageChangelog(packageName, requestedVersion)
-
+const hasChangelog = usePackageHasChangelog(
+  packageName,
+  () => requestedVersion.value || props.resolvedVersion,
+  true,
+)
 const changelogLink = computed((): RouteLocationRaw | null => {
   if (
     // either changelog.value is available or current page is the changelog
-    !(changelog.value || props.page == 'changelog') ||
+    !(hasChangelog.value || props.page == 'changelog') ||
     props.pkg == null ||
     props.resolvedVersion == null
   ) {

@@ -190,7 +190,11 @@ export default defineNuxtConfig({
     },
     // pages
     '/leaderboard/likes': getISRConfig(900),
-    '/package/**': getISRConfig(300, { fallback: 'html' }),
+    '/package/**': getISRConfig(300, {
+      fallback: 'html',
+      passQuery: true,
+      allowQuery: ['activeTab'],
+    }),
     '/package/:name/_payload.json': getISRConfig(300, { fallback: 'json' }),
     '/package/:name/v/:version/_payload.json': getISRConfig(300, { fallback: 'json' }),
     '/package/:org/:name/_payload.json': getISRConfig(300, { fallback: 'json' }),
@@ -392,16 +396,70 @@ export default defineNuxtConfig({
       // Commit the output PNGs so Vercel CI picks them up on the next build.
       screenshots: [
         // Desktop (form_factor "wide") — shown in Chrome's install dialog on desktop
-        { src: 'screenshots/desktop-dark-home.png', sizes: '1280x800', type: 'image/png', form_factor: 'wide', label: 'Browse npm packages' },
-        { src: 'screenshots/desktop-light-home.png', sizes: '1280x800', type: 'image/png', form_factor: 'wide', label: 'Browse npm packages (light mode)' },
-        { src: 'screenshots/desktop-dark-package.png', sizes: '1280x800', type: 'image/png', form_factor: 'wide', label: 'View package details' },
-        { src: 'screenshots/desktop-light-package.png', sizes: '1280x800', type: 'image/png', form_factor: 'wide', label: 'View package details (light mode)' },
+        {
+          src: 'screenshots/desktop-dark-home.png',
+          sizes: '1280x800',
+          type: 'image/png',
+          form_factor: 'wide',
+          label: 'Browse npm packages',
+        },
+        {
+          src: 'screenshots/desktop-light-home.png',
+          sizes: '1280x800',
+          type: 'image/png',
+          form_factor: 'wide',
+          label: 'Browse npm packages (light mode)',
+        },
+        {
+          src: 'screenshots/desktop-dark-package.png',
+          sizes: '1280x800',
+          type: 'image/png',
+          form_factor: 'wide',
+          label: 'View package details',
+        },
+        {
+          src: 'screenshots/desktop-light-package.png',
+          sizes: '1280x800',
+          type: 'image/png',
+          form_factor: 'wide',
+          label: 'View package details (light mode)',
+        },
         // Mobile (form_factor "narrow") — shown in Chrome's install dialog on Android
-        { src: 'screenshots/mobile-dark-home.png', sizes: '390x844', type: 'image/png', form_factor: 'narrow', label: 'Browse npm packages' },
-        { src: 'screenshots/mobile-light-home.png', sizes: '390x844', type: 'image/png', form_factor: 'narrow', label: 'Browse npm packages (light mode)' },
-        { src: 'screenshots/mobile-dark-package.png', sizes: '390x844', type: 'image/png', form_factor: 'narrow', label: 'View package details' },
-        { src: 'screenshots/mobile-light-package.png', sizes: '390x844', type: 'image/png', form_factor: 'narrow', label: 'View package details (light mode)' },
-      ] as { src: string; sizes: string; type: string; form_factor: 'wide' | 'narrow'; label: string }[],
+        {
+          src: 'screenshots/mobile-dark-home.png',
+          sizes: '390x844',
+          type: 'image/png',
+          form_factor: 'narrow',
+          label: 'Browse npm packages',
+        },
+        {
+          src: 'screenshots/mobile-light-home.png',
+          sizes: '390x844',
+          type: 'image/png',
+          form_factor: 'narrow',
+          label: 'Browse npm packages (light mode)',
+        },
+        {
+          src: 'screenshots/mobile-dark-package.png',
+          sizes: '390x844',
+          type: 'image/png',
+          form_factor: 'narrow',
+          label: 'View package details',
+        },
+        {
+          src: 'screenshots/mobile-light-package.png',
+          sizes: '390x844',
+          type: 'image/png',
+          form_factor: 'narrow',
+          label: 'View package details (light mode)',
+        },
+      ] as {
+        src: string
+        sizes: string
+        type: string
+        form_factor: 'wide' | 'narrow'
+        label: string
+      }[],
       icons: [
         {
           src: 'pwa-64x64.png',
@@ -457,6 +515,9 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    css: {
+      transformer: 'lightningcss',
+    },
     optimizeDeps: {
       include: [
         '@vueuse/core',
@@ -494,8 +555,14 @@ export default defineNuxtConfig({
 
 interface ISRConfigOptions {
   fallback?: 'html' | 'json'
+  allowQuery?: string[]
+  passQuery?: boolean
 }
 function getISRConfig(expirationSeconds: number, options: ISRConfigOptions = {}) {
+  const extraISR = {
+    ...(options.passQuery ? { passQuery: true } : {}),
+    ...(options.allowQuery ? { allowQuery: options.allowQuery } : {}),
+  }
   if (options.fallback) {
     return {
       isr: {
@@ -503,12 +570,14 @@ function getISRConfig(expirationSeconds: number, options: ISRConfigOptions = {})
         fallback:
           options.fallback === 'html' ? 'spa.prerender-fallback.html' : 'payload-fallback.json',
         initialHeaders: options.fallback === 'json' ? { 'content-type': 'application/json' } : {},
+        ...extraISR,
       } as { expiration: number },
     }
   }
   return {
     isr: {
       expiration: expirationSeconds,
+      ...extraISR,
     },
   }
 }
