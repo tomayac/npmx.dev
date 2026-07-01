@@ -12,8 +12,7 @@ function loadStored(npmUser: string): StoredLikes | null {
     if (!raw) return null
     const data = JSON.parse(raw) as StoredLikes
     return data.npmUser === npmUser ? data : null
-  }
-  catch {
+  } catch {
     return null
   }
 }
@@ -29,18 +28,15 @@ export function useLikesBadge() {
   // Cached package list — refreshed only when the npm user changes.
   const userPackages = shallowRef<string[]>([])
 
-  watch(
-    npmUser,
-    async (user) => {
-      if (!user) {
-        userPackages.value = []
-        return
-      }
-      const pkgMap = await listUserPackages()
-      // Cap at 20 packages to keep the polling cost bounded.
-      userPackages.value = pkgMap ? Object.keys(pkgMap).sort().slice(0, 20) : []
-    },
-  )
+  watch(npmUser, async user => {
+    if (!user) {
+      userPackages.value = []
+      return
+    }
+    const pkgMap = await listUserPackages()
+    // Cap at 20 packages to keep the polling cost bounded.
+    userPackages.value = pkgMap ? Object.keys(pkgMap).sort().slice(0, 20) : []
+  })
 
   async function checkLikes() {
     if (!canBadge || !npmUser.value || !userPackages.value.length) return
@@ -72,8 +68,7 @@ export function useLikesBadge() {
 
     if (newLikes > 0) {
       setBadge(newLikes)
-    }
-    else {
+    } else {
       clearBadge()
     }
   }
@@ -90,8 +85,7 @@ export function useLikesBadge() {
       if (connected && user) {
         checkLikes()
         timer = setInterval(checkLikes, POLL_INTERVAL_MS)
-      }
-      else {
+      } else {
         clearBadge()
       }
     },
