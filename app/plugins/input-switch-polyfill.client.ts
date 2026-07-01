@@ -1,5 +1,6 @@
 export default defineNuxtPlugin(async () => {
   if (!('switch' in HTMLInputElement.prototype)) {
+    // @ts-expect-error input-switch-polyfill ships no types; imported for its side effect only
     await import('input-switch-polyfill')
 
     // The polyfill reads `accent-color` once at upgrade time and freezes the

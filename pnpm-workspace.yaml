@@ -40,6 +40,7 @@ overrides:
   sharp: 0.34.5
   vite: npm:@voidzero-dev/vite-plus-core@0.1.20
   vitest: npm:@voidzero-dev/vite-plus-test@0.1.20
+  vue: 3.5.39
   vue-router: 5.0.4
 
 packageExtensions:
