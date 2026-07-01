@@ -126,11 +126,22 @@ async function startPreviewServer(): Promise<{ process: ChildProcess; url: strin
   })
 
   server.stderr?.on('data', (chunk: Buffer) => process.stderr.write(chunk))
-  server.on('error', err => {
-    throw err
+
+  // Throwing from an event handler wouldn't propagate to callers of this
+  // function, it would just crash the process. Route it through the
+  // returned promise instead, racing it against readiness polling so a
+  // spawn failure (e.g. ENOENT) doesn't hang until the timeout.
+  const serverError = new Promise<never>((_, reject) => {
+    server.on('error', reject)
   })
 
-  await waitForServer(url)
+  try {
+    await Promise.race([waitForServer(url), serverError])
+  } catch (err) {
+    server.kill('SIGTERM')
+    throw err
+  }
+
   console.log('Preview server ready.\n')
   return { process: server, url }
 }
