@@ -44,7 +44,14 @@ async function share() {
 
   const imageFile = await getOgImageFile()
   if (imageFile) {
-    shareData.files = [imageFile]
+    const shareDataWithFile: ShareData = { ...shareData, files: [imageFile] }
+    // Some implementations support sharing files or url/text, but not the
+    // combination of both. Only attach the file once the full payload
+    // (title + text + url + files) is confirmed shareable, so we keep the
+    // url/text fallback otherwise.
+    if (navigator.canShare?.(shareDataWithFile)) {
+      shareData.files = shareDataWithFile.files
+    }
   }
 
   await navigator.share(shareData).catch(() => {})
