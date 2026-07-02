@@ -352,6 +352,9 @@ export default defineNuxtConfig({
     },
     strategies: 'generateSW',
     registerType: 'prompt',
+    client: {
+      installPrompt: true,
+    },
     workbox: {
       navigateFallback: null,
       cleanupOutdatedCaches: true,
