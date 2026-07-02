@@ -277,5 +277,13 @@ html[data-kbd-hints='true'] kbd::before {
     bottom: 0;
     overflow-y: auto;
   }
+
+  /* Page-level sticky sub-headers (e.g. PackageHeader) use top-14 to clear
+     the fixed <header> when the viewport itself is the scroll container.
+     #app-scroll already starts below the header here, so that offset would
+     otherwise leave a redundant 3.5rem gap above them. */
+  #app-scroll .sticky[class~='top-14'] {
+    top: 0;
+  }
 }
 </style>
