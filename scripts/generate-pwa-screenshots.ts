@@ -146,7 +146,7 @@ async function startPreviewServer(): Promise<{ process: ChildProcess; url: strin
   return { process: server, url }
 }
 
-async function main(): Promise<void> {
+try {
   mkdirSync(OUT_DIR, { recursive: true })
 
   let server: ChildProcess | null = null
@@ -198,9 +198,7 @@ async function main(): Promise<void> {
   console.log(`\nScreenshots saved to public/screenshots/`)
   console.log('Commit them so they are included in the next Vercel build,')
   console.log('or use `--url https://npmx.dev` in CI to skip the local server.')
-}
-
-main().catch(err => {
+} catch (err) {
   console.error(err instanceof Error ? err.message : err)
   process.exit(1)
-})
+}
