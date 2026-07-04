@@ -24,6 +24,8 @@ function saveStored(npmUser: string, counts: Record<string, number>) {
 export function useLikesBadge() {
   const { isConnected, npmUser, listUserPackages } = useConnector()
   const { setBadge, clearBadge, canBadge } = useAppBadge()
+  const { settings } = useSettings()
+  const enabled = computed(() => settings.value.connector.showLikesBadge)
 
   // Cached package list — refreshed only when the npm user changes.
   const userPackages = shallowRef<string[]>([])
@@ -39,7 +41,7 @@ export function useLikesBadge() {
   })
 
   async function checkLikes() {
-    if (!canBadge || !npmUser.value || !userPackages.value.length) return
+    if (!canBadge || !enabled.value || !npmUser.value || !userPackages.value.length) return
 
     const results = await Promise.allSettled(
       userPackages.value.map(pkg =>
@@ -76,13 +78,13 @@ export function useLikesBadge() {
   let timer: ReturnType<typeof setInterval> | null = null
 
   watch(
-    [isConnected, npmUser],
-    ([connected, user]) => {
+    [isConnected, npmUser, enabled],
+    ([connected, user, isEnabled]) => {
       if (timer) {
         clearInterval(timer)
         timer = null
       }
-      if (connected && user) {
+      if (connected && user && isEnabled) {
         checkLikes()
         timer = setInterval(checkLikes, POLL_INTERVAL_MS)
       } else {

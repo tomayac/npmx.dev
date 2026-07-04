@@ -2694,6 +2694,12 @@
             },
             "auto_open_url": {
               "type": "string"
+            },
+            "show_likes_badge": {
+              "type": "string"
+            },
+            "show_likes_badge_description": {
+              "type": "string"
             }
           },
           "additionalProperties": false

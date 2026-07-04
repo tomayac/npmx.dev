@@ -896,7 +896,9 @@
       "warning_text": "This allows npmx to access your npm CLI. Only connect to sites you trust.",
       "connect": "Connect",
       "connecting": "Connecting...",
-      "auto_open_url": "Automatically open auth page"
+      "auto_open_url": "Automatically open auth page",
+      "show_likes_badge": "Show likes badge on app icon",
+      "show_likes_badge_description": "Badge the installed app icon with the number of new likes on your packages."
     }
   },
   "operations": {
