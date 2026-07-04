@@ -31,6 +31,13 @@ const colorScheme = computed(() => {
   }[colorMode.preference]
 })
 
+// Runs only while this root component is mounted (unlike a global plugin),
+// so it doesn't interfere with component tests that mountSuspended a
+// standalone component and mock useConnector for that component alone.
+if (import.meta.client) {
+  useLikesBadge()
+}
+
 // Keep theme-color in sync with --bg so the WCO title-bar strip (where the
 // OS traffic-lights / min-max-close buttons are drawn) matches the header.
 // We write directly to the <meta> DOM node rather than going through useHead
