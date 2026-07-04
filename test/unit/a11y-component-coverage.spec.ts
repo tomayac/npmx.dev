@@ -63,8 +63,6 @@ const SKIPPED_COMPONENTS: Record<string, string> = {
   'VideoPlayer.vue': 'Atproto video component, basic ui',
   'PwaPrompt.client.vue':
     'Requires active service worker - only renders when a PWA update is pending',
-  'Package/ShareButton.client.vue':
-    'Renders nothing when Web Share API is unavailable (test env); button itself has no a11y violations',
 }
 
 function normalizeComponentPath(filePath: string): string {
