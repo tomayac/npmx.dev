@@ -3258,6 +3258,9 @@
         },
         "binary_rendering_warning": {
           "type": "string"
+        },
+        "possibly_unnecessary": {
+          "type": "string"
         }
       },
       "additionalProperties": false
