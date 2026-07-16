@@ -82,7 +82,7 @@ export default defineNuxtConfig({
 
   vue: {
     compilerOptions: {
-      isCustomElement: tag => tag === 'search',
+      isCustomElement: (tag: string) => tag === 'search',
     },
   },
 
@@ -531,6 +531,7 @@ export default defineNuxtConfig({
         'vue-data-ui/vue-ui-xy',
         'vue-data-ui/vue-ui-scatter',
         'vue-data-ui/vue-ui-horizontal-bar',
+        'vue-data-ui/vue-ui-stackbar',
         'virtua/vue',
         'semver',
         'validate-npm-package-name',
